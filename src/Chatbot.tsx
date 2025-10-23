@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 
 const CHATBOT_ORIGIN = "https://9089e55dbab3.ngrok-free.app"; // Replace with your iframe origin
