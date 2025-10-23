@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 
-const CHATBOT_ORIGIN = "https://9089e55dbab3.ngrok-free.app"; // Replace with your iframe origin
+const CHATBOT_ORIGIN = "https://7d27d2aedb0c.ngrok-free.app"; // Replace with your iframe origin
 
 const ChatbotEmbed = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
