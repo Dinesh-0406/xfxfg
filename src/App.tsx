@@ -31,7 +31,7 @@ function App() {
       </p>
 
       {/* 👇 Add the chatbot here so it floats at bottom-right */}
-      <ChatbotEmbed />
+      {/* <ChatbotEmbed /> */}
     </>
   )
 }
