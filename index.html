@@ -2,160 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>xfxfg site</title>
 
-    <!-- ✅ Chatbot Styles
-    <style>
-      #chatbot-container {
-        position: fixed;
-        bottom: 30px;
-        right: 20px;
-        width: 550px;
-        height: 700px;
-        border-radius: 12px;
-        overflow: hidden;
-        z-index: 1000;
-        background: transparent;
-      }
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 
-      #chatbot-frame {
-        width: 100%;
-        height: 100%;
-        border: none;
-        display: block;
-      }
-
-      /* Optional: fade-in animation */
-      #chatbot-container {
-        opacity: 0;
-        animation: fadeIn 0.4s ease-in-out forwards;
-      }
-
-      @keyframes fadeIn {
-        to {
-          opacity: 1;
-        }
-      }
-    </style> -->
     <script type="application/javascript">
-(function(w,d,s,o,f,js,fjs){w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments);};(js=d.createElement(s)),(fjs=d.getElementsByTagName(s)[0]);js.id=o;js.src=f;js.async=1;js.referrerPolicy = "no-referrer";fjs.parentNode.insertBefore(js,fjs);})(window,document,"script","copilot","https://script.copilot.live/v1/copilot.min.js?tkn=cat-yi7nknkt");
-copilot("init",{
-  withCredentials: false,
-  crossOrigin: true
-});
-</script>
+      // Override XMLHttpRequest to disable credentials for copilot requests
+      (function () {
+        const OriginalXHR = window.XMLHttpRequest;
+
+        window.XMLHttpRequest = function () {
+          const xhr = new OriginalXHR();
+          const originalOpen = xhr.open;
+
+          xhr.open = function (method, url, ...args) {
+            if (url && url.includes("copilot.live")) {
+              xhr.withCredentials = false;
+            }
+            return originalOpen.apply(this, [method, url, ...args]);
+          };
+
+          return xhr;
+        };
+      })();
+
+      // Load Copilot script
+      (function (w, d, s, o, f) {
+        w[o] =
+          w[o] ||
+          function () {
+            (w[o].q = w[o].q || []).push(arguments);
+          };
+
+        const js = d.createElement(s);
+        const fjs = d.getElementsByTagName(s)[0];
+
+        js.id = o;
+        js.src = f;
+        js.async = true;
+        js.referrerPolicy = "no-referrer";
+
+        fjs.parentNode.insertBefore(js, fjs);
+      })(
+        window,
+        document,
+        "script",
+        "copilot",
+        "https://script.copilot.live/v1/copilot.min.js?tkn=cat-yi7nknkt"
+      );
+
+      // Error handling
+      window.addEventListener("error", function (e) {
+        if (e.message && e.message.includes("copilot")) {
+          console.warn("Copilot error handled:", e.message);
+          e.preventDefault();
+        }
+      });
+
+      // Initialize Copilot
+      copilot("init", {});
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
-
-    <!-- ✅ Your React/Vite App -->
+    <script src="https://chatbot.aicte-india.org/embed.js?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6ImRldi1hZG1pbi0wMDEiLCJkb2NfaWQiOiJ4ZnhmZy52ZXJjZWwuYXBwIiwiZG9tYWluIjoieGZ4ZmcudmVyY2VsLmFwcCIsInBsYW4iOiJzdGFuZGFyZCIsImlhdCI6MTc3NzI1NDg4NywiZXhwIjoxODA4NzkwODg3fQ.HzPATPWvYGt0QJlEk_L2ijje_XtKtZM-RzRKkL_K3PE" defer></script>
+    <!-- React App -->
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- ✅ Chatbot Iframe Embed -->
-    <!-- <div id="chatbot-container">
-      <iframe
-        id="chatbot-frame"
-        src="https://chatbot.aicte-india.org/chatbot/"
-        title="Anuvadini Chatbot"
-        scrolling="no"
-        allow="microphone; camera; clipboard-write"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        referrerpolicy="strict-origin"
-        allowfullscreen
-        style="
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    overflow: hidden;
-  "
-      ></iframe>
-    </div> -->
-
-    <!-- ✅ Parent-to-Chatbot Communication Script -->
-    <!-- <script>
-      (function () {
-        const CHATBOT_ORIGIN = "https://chatbot.aicte-india.org";
-        const iframe = document.getElementById("chatbot-frame");
-        const parentHost = window.location.hostname;
-        console.log("🧭 [PARENT] Detected hostname:", parentHost);
-
-        let readyReceived = false;
-
-        function sendDocId(label = "") {
-          if (!iframe.contentWindow) {
-            console.warn(
-              "⚠️ [PARENT] iframe.contentWindow missing, skipping postMessage"
-            );
-            return;
-          }
-          console.log(
-            `📤 [PARENT -> IFRAME] Sending doc_id (${label}):`,
-            parentHost
-          );
-
-          iframe.contentWindow.postMessage(
-            { type: "SET_DOC_ID", docId: parentHost },
-            CHATBOT_ORIGIN
-          );
-        }
-
-        function handleLoad() {
-          console.log("✅ [PARENT] Iframe loaded");
-
-          // ✅ Retry sending doc_id if iframe takes time to be ready
-          const trySend = (attempt = 0) => {
-            if (iframe.contentWindow) {
-              sendDocId("onload");
-              setTimeout(() => sendDocId("500ms-delay"), 500);
-              setTimeout(() => sendDocId("1000ms-delay"), 1000);
-            } else if (attempt < 5) {
-              setTimeout(() => trySend(attempt + 1), 200);
-            }
-          };
-          trySend();
-        }
-
-        function handleMessage(event) {
-          if (!event.origin.includes("chatbot.aicte-india.org")) {
-            console.warn(
-              "🚫 [PARENT] Ignored message from origin:",
-              event.origin
-            );
-            return;
-          }
-
-          console.log("📨 [PARENT <- IFRAME] Message received:", event.data);
-
-          if (event.data?.type === "CHATBOT_READY" && !readyReceived) {
-            readyReceived = true;
-            console.log(
-              "🚀 [PARENT] Chatbot ready signal received — sending doc_id"
-            );
-            sendDocId("CHATBOT_READY");
-          }
-
-          if (event.data?.type === "DOC_ID_ACK") {
-            console.log(
-              "✅ [PARENT] Chatbot acknowledged doc_id:",
-              event.data.docId
-            );
-          }
-
-          if (event.data?.type === "DOC_ID_AUTO") {
-            console.log(
-              "📦 [PARENT] Chatbot auto-sent doc_id:",
-              event.data.docId
-            );
-          }
-        }
-
-        iframe.addEventListener("load", handleLoad);
-        window.addEventListener("message", handleMessage);
-      })();
-    </script> -->
-  <!-- <script src="https://chatbot.aicte-india.org/embed.js?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6ImRldi1hZG1pbi0wMDEiLCJkb2NfaWQiOiJ4ZnhmZy52ZXJjZWwuYXBwIiwiZG9tYWluIjoieGZ4ZmcudmVyY2VsLmFwcCIsInBsYW4iOiJzdGFuZGFyZCIsImlhdCI6MTc2NDg1MDIwMSwiZXhwIjoxNzk2Mzg2MjAxfQ.nqDNqkbJimql3b2YKW5bc5ZnRRL-MVBevTfd4DhbE9A" defer></script> -->
   </body>
 </html>
